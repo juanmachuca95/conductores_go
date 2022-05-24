@@ -29,7 +29,7 @@ func (s *AuthService) login(u *m.Login) (*m.User, error) {
 	defer stmt.Close()
 
 	var user m.User
-	err = stmt.QueryRow(u.Username).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+	err = stmt.QueryRow(u.Email).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 	if err != nil {
 		return &m.User{}, errors.New("No existe el usuario")
 	}
