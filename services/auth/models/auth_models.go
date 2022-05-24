@@ -14,3 +14,12 @@ type Login struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type User struct {
+	Id         int64  `json:"id"`
+	Name       string `json:"name"`
+	Email      string `json:"username"`
+	Password   string `json:"password"`
+	Created_at string `json:"created_at"`
+	Updated_at string `json:"updated_at"`
+}

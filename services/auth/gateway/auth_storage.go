@@ -20,12 +20,17 @@ func NewAuthStorageGateway(db *database.MySQLClient) AuthGateway {
 	return &AuthService{db}
 }
 
-func (s *AuthService) login(u *m.Login) (string, error) {
+func (s *AuthService) login(u *m.Login) (*m.User, error) {
 	stmt, err := s.Prepare(q.GetUser())
 	if err != nil {
-		return "", errors.New("Este usuario no existe.")
+		panic(err)
 	}
 	defer stmt.Close()
 
+	var user m.User
+	err = stmt.QueryRow(u.Username).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+	if err != nil {
+		return &m.User{}, errors.New("No existe el usuario")
+	}
 	return "", nil
 }
