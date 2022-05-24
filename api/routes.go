@@ -14,6 +14,7 @@ func InitRoute() *gin.Engine {
 
 	/* Auth - Services */
 	r.POST("/login", authSvc.LoginHandler)
+	r.POST("/register", authSvc.RegisterHandler)
 
 	return r
 }

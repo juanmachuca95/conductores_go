@@ -6,8 +6,8 @@ import (
 )
 
 type AuthGateway interface {
-	Login(*m.Login) (*m.User, error)
-	Register(*m.Register) (*m.User, error)
+	Login(*m.Login) (*m.UserToken, error)
+	Register(*m.Register) (*m.UserToken, error)
 }
 
 type AuthInDB struct {
@@ -18,10 +18,10 @@ func NewAuthService() AuthGateway {
 	return &AuthService{database.NewMySQLClient()}
 }
 
-func (s *AuthService) Login(u *m.Login) (*m.User, error) {
+func (s *AuthService) Login(u *m.Login) (*m.UserToken, error) {
 	return s.login(u)
 }
 
-func (s *AuthService) Register(u *m.Register) (*m.User, error) {
-	return s.Register(u)
+func (s *AuthService) Register(u *m.Register) (*m.UserToken, error) {
+	return s.register(u)
 }

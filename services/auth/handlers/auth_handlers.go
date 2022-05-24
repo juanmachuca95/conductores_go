@@ -2,10 +2,7 @@ package auth
 
 import (
 	"net/http"
-	"os"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	auth "github.com/juanmachuca95/spaceguru/services/auth/gateway"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
@@ -28,20 +25,25 @@ func (s *ServiceHTTPAuth) LoginHandler(c *gin.Context) {
 
 	user, err := s.gtw.Login(&login)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": "User no autorizado"})
+		c.JSON(http.StatusUnauthorized, gin.H{"status": err.Error()})
 		return
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["sub"] = "1"
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 1) // Una día
-	claims["user"] = user
-	jwtSecret := os.Getenv("TOKEN_API_AUTH")
-	_token, err := token.SignedString([]byte(jwtSecret))
-	if err != nil {
-		panic(err)
+	c.JSON(http.StatusOK, gin.H{"status": "Success", "_token": user.Token})
+}
+
+func (s *ServiceHTTPAuth) RegisterHandler(c *gin.Context) {
+	var register m.Register
+	if err := c.ShouldBindJSON(&register); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Estas loggeado", "_token": _token})
+	user, err := s.gtw.Register(&register)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Success", "_token": user.Token})
 }
