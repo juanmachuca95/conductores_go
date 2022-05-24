@@ -6,6 +6,7 @@ import (
 	database "github.com/juanmachuca95/spaceguru/internal/databases"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
 	q "github.com/juanmachuca95/spaceguru/services/auth/querys"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthStorage interface {
@@ -32,5 +33,13 @@ func (s *AuthService) login(u *m.Login) (*m.User, error) {
 	if err != nil {
 		return &m.User{}, errors.New("No existe el usuario")
 	}
-	return "", nil
+
+	hashByte := []byte(user.Password)
+	passwordByte := []byte(u.Password)
+	err = bcrypt.CompareHashAndPassword(hashByte, passwordByte) // Validación de la contrasenia por el hash
+	if err != nil {
+		return &m.User{}, errors.New("Credenciales incorrectas.")
+	}
+
+	return &user, nil
 }
