@@ -2,6 +2,7 @@ package auth
 
 import (
 	database "github.com/juanmachuca95/spaceguru/internal/databases"
+	service_jwt "github.com/juanmachuca95/spaceguru/internal/service_jwt"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
 )
 
@@ -10,12 +11,8 @@ type AuthGateway interface {
 	Register(*m.Register) (*m.UserToken, error)
 }
 
-type AuthInDB struct {
-	AuthStorage
-}
-
 func NewAuthService() AuthGateway {
-	return &AuthService{database.NewMySQLClient()}
+	return &AuthService{database.NewMySQLClient(), service_jwt.JWTAuthService()}
 }
 
 func (s *AuthService) Login(u *m.Login) (*m.UserToken, error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	database "github.com/juanmachuca95/spaceguru/internal/databases"
+	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
 	q "github.com/juanmachuca95/spaceguru/services/auth/querys"
 	"golang.org/x/crypto/bcrypt"
@@ -19,10 +20,7 @@ type AuthStorage interface {
 
 type AuthService struct {
 	*database.MySQLClient
-}
-
-func NewAuthStorageGateway(db *database.MySQLClient) AuthGateway {
-	return &AuthService{db}
+	srvJWT srvJWT.JWTService
 }
 
 type claims struct {
@@ -61,14 +59,7 @@ func (s *AuthService) login(u *m.Login) (*m.UserToken, error) {
 		return &m.UserToken{}, errors.New("Credenciales incorrectas.")
 	}
 
-	claims := NewClaims(user)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	jwtSecret := os.Getenv("TOKEN_API_AUTH")
-	_token, err := token.SignedString([]byte(jwtSecret))
-	if err != nil {
-		return &m.UserToken{}, err
-	}
-
+	_token := s.srvJWT.GenerateToken(user)
 	return &m.UserToken{
 		Token: _token,
 	}, nil
@@ -95,14 +86,7 @@ func (s *AuthService) register(u *m.Register) (*m.UserToken, error) {
 	}
 
 	user, _ := s.getUser(users_id)
-	claims := NewClaims(*user)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	jwtSecret := os.Getenv("TOKEN_API_AUTH")
-	_token, err := token.SignedString([]byte(jwtSecret))
-	if err != nil {
-		return &m.UserToken{}, err
-	}
-
+	_token := s.srvJWT.GenerateToken(*user)
 	return &m.UserToken{
 		Token: _token,
 	}, nil
