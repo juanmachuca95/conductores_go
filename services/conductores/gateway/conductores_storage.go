@@ -11,6 +11,7 @@ import (
 
 type ConductorStorage interface {
 	getConductores(page int) (*[]m.Conductor, error)
+	getConductoresDisponibles() (*[]m.Conductor, error)
 }
 
 type ServiceConductor struct {
@@ -45,6 +46,37 @@ func (s *ServiceConductor) getConductores(page int) (*[]m.Conductor, error) {
 		err = rows.Scan(&conductor.Id, &conductor.Name, &conductor.Email, &conductor.Users_id, &conductor.Matricula, &conductor.Vehiculo, &conductor.Created_at, &conductor.Updated_at)
 		if err != nil {
 			panic(err.Error())
+		}
+
+		conductores = append(conductores, conductor)
+	}
+
+	if rows.Err() != nil {
+		panic(rows.Err())
+	}
+
+	return &conductores, nil
+}
+
+func (s *ServiceConductor) getConductoresDisponibles() (*[]m.Conductor, error) {
+	stmt, err := s.Prepare(q.GetConductoresDisponibles())
+	if err != nil {
+		panic(err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		panic(err)
+	}
+
+	var conductores []m.Conductor
+	for rows.Next() {
+		var conductor m.Conductor
+		err := rows.Scan(&conductor.Id, &conductor.Name, &conductor.Users_id, &conductor.Matricula, &conductor.Vehiculo, &conductor.Created_at, &conductor.Updated_at)
+
+		if err != nil {
+			panic(err)
 		}
 
 		conductores = append(conductores, conductor)

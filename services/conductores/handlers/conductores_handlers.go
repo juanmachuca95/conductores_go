@@ -2,7 +2,6 @@ package conductores
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,11 +25,14 @@ func (s *ServiceHTTPConductores) GetConductoresHandler(c *gin.Context) {
 		return
 	}
 
-	log.Println(request.Page)
 	conductores, err := s.GetConductores(request.Page)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "Success", "conductores": conductores})
+}
+
+func (s *ServiceHTTPConductores) GetConductoresDisponiblesHandler(c *gin.Context) {
+
 }

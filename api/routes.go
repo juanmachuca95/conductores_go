@@ -3,13 +3,13 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	database "github.com/juanmachuca95/spaceguru/internal/databases"
-	"github.com/juanmachuca95/spaceguru/internal/middleware"
+
 	serviceAuth "github.com/juanmachuca95/spaceguru/services/auth/handlers"
 	serviceCond "github.com/juanmachuca95/spaceguru/services/conductores/handlers"
 )
 
 func InitRoute() *gin.Engine {
-	r := gin.Default()
+	r := gin.New()
 	r.SetTrustedProxies(nil)
 
 	/* Conección */
@@ -32,12 +32,10 @@ func InitRoute() *gin.Engine {
 	r.POST("/login", authSvc.LoginHandler)
 	r.POST("/register", authSvc.RegisterHandler)
 
-	authorized := r.Group("/")
-	authorized.Use(middleware.AuthorizeJWT())
-	{
-		/* Conductores - Services */
-		r.GET("/conductores", condSvc.GetConductoresHandler)
-	}
+	/* Conductores - Services */
+	//r.Use(middleware.AuthorizeJWT())
+	r.GET("/conductores", condSvc.GetConductoresHandler)
+	r.GET("/conductoresdisponibles", condSvc.GetConductoresDisponiblesHandler)
 
 	return r
 }

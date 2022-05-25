@@ -16,6 +16,12 @@ func NewSeeder(db *sql.DB) *Seeder { return &Seeder{db} }
 
 func (s Seeder) UsersSeed() {
 	stmt, _ := s.Prepare(`INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?,?,?,NOW(),NOW())`)
+
+	_, err := stmt.Exec("Administrador", "admin@spaceguru.com", "$2y$10$WZFBKZT58ZvKd35HCv8EAuboBwld50iONiDC6StX1vsEUjOTAW3Tq")
+	if err != nil {
+		panic(err)
+	}
+
 	for i := 0; i < 100; i++ {
 		_, err := stmt.Exec(faker.Name(), faker.Email(), faker.Password())
 		if err != nil {

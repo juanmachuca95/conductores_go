@@ -8,6 +8,7 @@ import (
 
 type ConductorGateway interface {
 	GetConductores(page int) (*[]m.Conductor, error)
+	GetConductoresDisponibles() (*[]m.Conductor, error)
 }
 
 type ConductorInDB struct {
@@ -21,4 +22,9 @@ func NewConductorGateway(db *sql.DB) ConductorGateway {
 // Obtener todos los conductores con paginación
 func (c *ConductorInDB) GetConductores(page int) (*[]m.Conductor, error) {
 	return c.getConductores(page)
+}
+
+// Obtener todos los conductores que no esten realizando viajes
+func (c *ConductorInDB) GetConductoresDisponibles() (*[]m.Conductor, error) {
+	return c.getConductoresDisponibles()
 }
