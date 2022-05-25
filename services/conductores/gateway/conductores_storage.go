@@ -34,7 +34,7 @@ func (s *ServiceConductor) getConductores(page int) (*[]m.Conductor, error) {
 	if page == 0 {
 		page = 1
 	}
-	log.Println("LIMIT ", perpage, " OFFSET ", ((page - 1) * perpage))
+
 	rows, err := stmt.Query(perpage, ((page - 1) * perpage))
 	if err != nil {
 		log.Fatal(err.Error())

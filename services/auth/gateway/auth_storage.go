@@ -35,7 +35,7 @@ func (s *AuthService) login(u *m.Login) (*m.UserToken, error) {
 
 	var user m.User
 	var password string
-	err = stmt.QueryRow(u.Email).Scan(&user.Id, &user.Name, &user.Email, &password, &user.Rol)
+	err = stmt.QueryRow(u.Email).Scan(&user.Id, &user.Name, &user.Email, &password)
 	if err != nil {
 		return &m.UserToken{}, errors.New("Este usuario no existe.")
 	}
@@ -47,7 +47,8 @@ func (s *AuthService) login(u *m.Login) (*m.UserToken, error) {
 		return &m.UserToken{}, errors.New("Credenciales incorrectas.")
 	}
 
-	_token := s.srvJWT.GenerateToken(user)
+	roles, _ := s.getRolesUser(user.Id)
+	_token := s.srvJWT.GenerateToken(user, *roles)
 	return &m.UserToken{
 		Token: _token,
 	}, nil
@@ -74,7 +75,8 @@ func (s *AuthService) register(u *m.Register) (*m.UserToken, error) {
 	}
 
 	user, _ := s.getUser(users_id)
-	_token := s.srvJWT.GenerateToken(*user)
+	roles, _ := s.getRolesUser(user.Id)
+	_token := s.srvJWT.GenerateToken(*user, *roles)
 	return &m.UserToken{
 		Token: _token,
 	}, nil
@@ -94,4 +96,34 @@ func (s *AuthService) getUser(id int64) (*m.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (s *AuthService) getRolesUser(id int64) (*[]m.RolesUser, error) {
+	stmt, err := s.Prepare(q.GetRolesUser())
+	if err != nil {
+		panic(err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var rolesusers []m.RolesUser
+	for rows.Next() {
+		var rolesuser m.RolesUser
+		err := rows.Scan(&rolesuser.Id, &rolesuser.Role)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		rolesusers = append(rolesusers, rolesuser)
+	}
+
+	if rows.Err() != nil {
+		panic(err.Error())
+	}
+
+	return &rolesusers, nil
 }

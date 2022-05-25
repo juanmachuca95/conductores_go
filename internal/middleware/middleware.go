@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	service "github.com/juanmachuca95/spaceguru/internal/service_jwt"
 )
@@ -14,16 +13,29 @@ func AuthorizeJWT() gin.HandlerFunc {
 		const BEARER_SCHEMA = "Bearer "
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatus(http.StatusBadGateway)
+			c.AbortWithStatus(403)
 			return
 		}
 
 		tokenString := authHeader[len(BEARER_SCHEMA):]
 		token, err := service.JWTAuthService().ValidateToken(tokenString)
 		if token.Valid {
-			claims := token.Claims.(jwt.MapClaims)
-			fmt.Println(claims)
-			c.Next()
+			roles, err := service.JWTAuthService().ExtractDataInfoFromJWT(tokenString)
+			if err != nil {
+				c.AbortWithStatus(403)
+			}
+
+			next := false
+			for _, role := range roles {
+				if role.Role == "admin" {
+					next = true
+				}
+			}
+			if next {
+				c.Next()
+			} else {
+				c.AbortWithStatus(403)
+			}
 		} else {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusUnauthorized)

@@ -1,8 +1,8 @@
 package service
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -11,12 +11,14 @@ import (
 )
 
 type JWTService interface {
-	GenerateToken(user auth.User) string
-	ValidateToken(token string) (*jwt.Token, error)
+	GenerateToken(auth.User, []auth.RolesUser) string
+	ValidateToken(string) (*jwt.Token, error)
+	ExtractDataInfoFromJWT(string) ([]auth.RolesUser, error)
 }
 
 type claims struct {
-	User auth.User `json:"user"`
+	User  auth.User        `json:"user"`
+	Roles []auth.RolesUser `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -36,9 +38,10 @@ func getSecretKey() string {
 	return secret
 }
 
-func (service *jwtServices) GenerateToken(user auth.User) string {
+func (service *jwtServices) GenerateToken(user auth.User, roles []auth.RolesUser) string {
 	claims := &claims{
-		User: user,
+		Roles: roles,
+		User:  user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 48).Unix(),
 		},
@@ -51,30 +54,29 @@ func (service *jwtServices) GenerateToken(user auth.User) string {
 	return _token
 }
 
-func (service *jwtServices) ValidateToken(encodedToken string) (*jwt.Token, error) {
-	return jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
+func (service *jwtServices) ValidateToken(receivedToken string) (*jwt.Token, error) {
+	return jwt.Parse(receivedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, isvalid := token.Method.(*jwt.SigningMethodHMAC); !isvalid {
-			return nil, fmt.Errorf("Invalid token %s", token.Header["alg"])
+			return nil, fmt.Errorf("Invalid token")
 		}
 		return []byte(service.secretKey), nil
 	})
 }
 
-func (service *jwtServices) ExtractDataInfoFromJWT(bearer, tokenKey string) string {
-	token := bearer[7:]
-	log.Println(token)
-	t, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		return []byte(tokenKey), nil
+func (service *jwtServices) ExtractDataInfoFromJWT(tokenString string) ([]auth.RolesUser, error) {
+	t, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		return []byte(service.secretKey), nil
 	})
 
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	if t.Valid {
 		claims := t.Claims.(jwt.MapClaims)
-		return claims["id"].(string)
+
+		return claims["roles"].([]auth.RolesUser), nil
 	}
 
-	return ""
+	return []auth.RolesUser{}, errors.New("No fue posible procesar su token.")
 }
