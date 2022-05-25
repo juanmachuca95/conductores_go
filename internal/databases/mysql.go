@@ -8,16 +8,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type MySQLClient struct {
-	*sql.DB
-}
-
-func NewMySQLClient() *MySQLClient {
+func NewMySQLClient() *sql.DB {
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("USERNAME"), os.Getenv("PASSWORD"), os.Getenv("HOSTNAME"), os.Getenv("PORT"), os.Getenv("DATABASE"))
 	db, err := sql.Open("mysql", dns)
 	if err != nil {
 		panic(err)
 	}
 
-	return &MySQLClient{db}
+	return db
 }

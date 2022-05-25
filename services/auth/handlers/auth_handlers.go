@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,8 +13,8 @@ type ServiceHTTPAuth struct {
 	gtw auth.AuthGateway
 }
 
-func NewServiceHTTPAuth() *ServiceHTTPAuth {
-	return &ServiceHTTPAuth{auth.NewAuthService()}
+func NewServiceHTTPAuth(db *sql.DB) *ServiceHTTPAuth {
+	return &ServiceHTTPAuth{auth.NewAuthGateway(db)}
 }
 
 func (s *ServiceHTTPAuth) LoginHandler(c *gin.Context) {

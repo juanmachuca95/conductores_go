@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -57,4 +58,23 @@ func (service *jwtServices) ValidateToken(encodedToken string) (*jwt.Token, erro
 		}
 		return []byte(service.secretKey), nil
 	})
+}
+
+func (service *jwtServices) ExtractDataInfoFromJWT(bearer, tokenKey string) string {
+	token := bearer[7:]
+	log.Println(token)
+	t, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		return []byte(tokenKey), nil
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	if t.Valid {
+		claims := t.Claims.(jwt.MapClaims)
+		return claims["id"].(string)
+	}
+
+	return ""
 }

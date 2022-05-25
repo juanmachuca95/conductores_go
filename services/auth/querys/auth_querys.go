@@ -1,7 +1,7 @@
 package auth
 
 var GetUser = func() string {
-	return "SELECT id, name, email, password, rol FROM users WHERE email = ?;"
+	return "SELECT id, name, email, password FROM users WHERE email = ?;"
 }
 
 var GetUserById = func() string {

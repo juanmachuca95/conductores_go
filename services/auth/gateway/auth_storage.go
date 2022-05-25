@@ -1,12 +1,10 @@
 package auth
 
 import (
+	"database/sql"
 	"errors"
 	"os"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	database "github.com/juanmachuca95/spaceguru/internal/databases"
 	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
 	q "github.com/juanmachuca95/spaceguru/services/auth/querys"
@@ -14,28 +12,18 @@ import (
 )
 
 type AuthStorage interface {
-	login(u *m.Login) (string, error)
+	login(u *m.Login) (*m.UserToken, error)
 	register(u *m.Register) (*m.UserToken, error)
+	getUser(id int64) (*m.User, error)
 }
 
 type AuthService struct {
-	*database.MySQLClient
+	*sql.DB
 	srvJWT srvJWT.JWTService
 }
 
-type claims struct {
-	User m.User `json:"user"`
-	jwt.StandardClaims
-}
-
-func NewClaims(user m.User) *claims {
-	return &claims{
-		User: user,
-		StandardClaims: jwt.StandardClaims{
-			Subject:   "1",
-			ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
-		},
-	}
+func NewAuthStorageGateway(db *sql.DB) AuthStorage {
+	return &AuthService{db, srvJWT.JWTAuthService()}
 }
 
 func (s *AuthService) login(u *m.Login) (*m.UserToken, error) {
