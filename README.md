@@ -49,12 +49,100 @@ curl -X POST http://localhost:8080/login -H 'Content-Type: application/json' -d 
 
 Con el token de la respuesta. Nos dirigimos a https://jwt.io y pegamos nuestro token.
 
+```json
+{
+  "user": {
+    "id": 1,
+    "name": "Administrador",
+    "email": "admin@spaceguru.com"
+  },
+  "roles": [
+    "admin"
+  ],
+  "exp": 1653711999
+}
+```
 
-Ejemplo de login para usuario administrador
+Ingresamos una cuenta de conductor:
+```bash 
+curl -X POST http://localhost:8080/login -H 'Content-Type: application/json' -d '{"email":"conductor@spaceguru.com", "password":"123456"}'
+```
 
 ```json
 {
-    "email":"admin@spaceguru.com",
-    "password":"123456"
+  "user": {
+    "id": 102,
+    "name": "Conductor test",
+    "email": "conductor@spaceguru.com"
+  },
+  "roles": [
+    "conductor"
+  ],
+  "exp": 1653712180
+}
+```
+
+
+2. Obtener los conductores - utilizando paginación
+
+```sh
+curl -X GET http://localhost:8080/conductores -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5Ac3BhY2VndXJ1LmNvbSJ9LCJyb2xlcyI6WyJhZG1pbiJdLCJleHAiOjE2NTM2OTYzMzJ9.TKWpE2ut1HfKFlsjmi7jvpWRd_jwJepcW_lAwOeVp00' -d '{"page":5}'
+```
+
+```json
+{
+  "conductores": [
+    {
+      "id": 11,
+      "users_id": 31,
+      "name": "Mrs. Clarissa McDermott",
+      "email": "gCAdxcw@AxUsYny.org",
+      "matricula": "472",
+      "vehiculo": "Prof. Emely Goodwin",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 12,
+      "users_id": 37,
+      "name": "Miss Zita Emard",
+      "email": "ggLhBly@UXspyFv.ru",
+      "matricula": "1502",
+      "vehiculo": "Miss Dasia Nienow",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 13,
+      "users_id": 45,
+      "name": "Queen Juana Schroeder",
+      "email": "hrcxbwv@VkaByfn.net",
+      "matricula": "171",
+      "vehiculo": "Queen Mikayla Walker",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 14,
+      "users_id": 39,
+      "name": "Princess Kenyatta Mertz",
+      "email": "Hygujte@hVVrYJT.net",
+      "matricula": "1719",
+      "vehiculo": "Queen Jeanne Jacobs",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 15,
+      "users_id": 34,
+      "name": "Princess Hortense Gleason",
+      "email": "IfKTxIY@ZrigpOe.com",
+      "matricula": "1371",
+      "vehiculo": "Lady Callie Labadie",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    }
+  ],
+  "status": "Success"
 }
 ```
