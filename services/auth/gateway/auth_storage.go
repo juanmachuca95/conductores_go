@@ -3,7 +3,6 @@ package auth
 import (
 	"database/sql"
 	"errors"
-	"os"
 
 	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
 	m "github.com/juanmachuca95/spaceguru/services/auth/models"
@@ -63,7 +62,6 @@ func (s *AuthService) register(u *m.Register) (*m.UserToken, error) {
 	}
 	defer stmt.Close()
 
-	u.Rol = os.Getenv("DEFAULT_ROL")
 	hashPass, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.MinCost)
 	var passwordHashed string = string(hashPass)
 	result, err := stmt.Exec(u.Name, u.Email, passwordHashed, u.Rol)

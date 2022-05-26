@@ -41,15 +41,26 @@ func (s *ServiceHTTPConductores) GetConductoresHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	conductores, err := s.GetConductores(request.Page)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Success", "conductores": conductores})
+	c.JSON(http.StatusOK, gin.H{
+		"status":      "Success",
+		"conductores": conductores,
+	})
 }
 
 func (s *ServiceHTTPConductores) GetConductoresDisponiblesHandler(c *gin.Context) {
+	conductoresDisponibles, err := s.GetConductoresDisponibles()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
 
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Conductores disponibles que no están realizando viajes",
+		"status":      "Success",
+		"conductores": conductoresDisponibles,
+	})
 }

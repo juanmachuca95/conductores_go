@@ -117,7 +117,7 @@ func (s *ServiceConductor) getConductoresDisponibles() (*[]m.Conductor, error) {
 	var conductores []m.Conductor
 	for rows.Next() {
 		var conductor m.Conductor
-		err := rows.Scan(&conductor.Id, &conductor.Name, &conductor.Users_id, &conductor.Matricula, &conductor.Vehiculo, &conductor.Created_at, &conductor.Updated_at)
+		err := rows.Scan(&conductor.Id, &conductor.Name, &conductor.Email, &conductor.Users_id, &conductor.Matricula, &conductor.Vehiculo, &conductor.Created_at, &conductor.Updated_at)
 
 		if err != nil {
 			panic(err)

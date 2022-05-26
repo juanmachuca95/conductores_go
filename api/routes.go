@@ -34,7 +34,7 @@ func InitRoute() *gin.Engine {
 
 	/* Conductores - Services */
 	r.Use(middleware.AuthorizeJWT())
-	r.POST("/register", authSvc.RegisterHandler)
+	r.POST("/createadmin", authSvc.RegisterHandler)
 	r.GET("/conductores", condSvc.GetConductoresHandler)
 	r.POST("/createconductor", condSvc.CreateConductorHandler)
 	r.GET("/conductoresdisponibles", condSvc.GetConductoresDisponiblesHandler)
