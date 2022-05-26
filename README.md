@@ -146,3 +146,50 @@ curl -X GET http://localhost:8080/conductores -H 'Authorization: Bearer eyJhbGci
   "status": "Success"
 }
 ```
+
+3. Obtener los conductores que no esta realizando viajes
+
+```sh
+curl -X GET http://localhost:8080/conductoresdisponibles -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5Ac3BhY2VndXJ1LmNvbSJ9LCJyb2xlcyI6WyJhZG1pbiJdLCJleHAiOjE2NTM2OTYzMzJ9.TKWpE2ut1HfKFlsjmi7jvpWRd_jwJepcW_lAwOeVp00'  
+```
+
+Respuesta: 
+
+```json
+{
+  "conductores": [
+    {
+      "id": 2,
+      "users_id": 69,
+      "name": "Ms. Kimberly Monahan",
+      "email": "bkScYfL@qNcunro.org",
+      "matricula": "1674",
+      "vehiculo": "Dr. Sunny Runolfsdottir",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 3,
+      "users_id": 57,
+      "name": "Ms. Libby O\"Keefe",
+      "email": "BtHgSsT@aHTBWvN.ru",
+      "matricula": "622",
+      "vehiculo": "Dr. Madalyn Roberts",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+    {
+      "id": 4,
+      "users_id": 47,
+      "name": "Miss Leilani Towne",
+      "email": "CmnYaFt@vuVmUDr.biz",
+      "matricula": "359",
+      "vehiculo": "Dr. Jaunita Cronin",
+      "created_at": "2022-05-25 17:11:13",
+      "updated_at": "2022-05-25 17:11:13"
+    },
+  ],
+  "message": "Conductores disponibles que no están realizando viajes",
+  "status": "Success"
+}
+```
