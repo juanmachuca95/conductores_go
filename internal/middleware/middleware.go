@@ -26,8 +26,9 @@ func AuthorizeJWT() gin.HandlerFunc {
 			}
 
 			next := false
-			for _, role := range roles {
-				if role.Role == "admin" {
+			for _, role := range roles.([]interface{}) {
+				role := fmt.Sprintf("%v", role)
+				if role == "admin" {
 					next = true
 				}
 			}

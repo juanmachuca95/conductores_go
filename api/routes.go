@@ -31,11 +31,12 @@ func InitRoute() *gin.Engine {
 
 	/* Auth - Services */
 	r.POST("/login", authSvc.LoginHandler)
-	r.POST("/register", authSvc.RegisterHandler)
 
 	/* Conductores - Services */
 	r.Use(middleware.AuthorizeJWT())
+	r.POST("/register", authSvc.RegisterHandler)
 	r.GET("/conductores", condSvc.GetConductoresHandler)
+	r.POST("/createconductor", condSvc.CreateConductorHandler)
 	r.GET("/conductoresdisponibles", condSvc.GetConductoresDisponiblesHandler)
 
 	return r

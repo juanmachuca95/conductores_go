@@ -27,6 +27,5 @@ type UserToken struct {
 	Token string `json:"_token"`
 }
 type RolesUser struct {
-	Id   int64  `json:"id"`
 	Role string `json:"role"`
 }

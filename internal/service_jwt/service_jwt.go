@@ -11,14 +11,14 @@ import (
 )
 
 type JWTService interface {
-	GenerateToken(auth.User, []auth.RolesUser) string
+	GenerateToken(auth.User, []string) string
 	ValidateToken(string) (*jwt.Token, error)
-	ExtractDataInfoFromJWT(string) ([]auth.RolesUser, error)
+	ExtractDataInfoFromJWT(string) (interface{}, error)
 }
 
 type claims struct {
-	User  auth.User        `json:"user"`
-	Roles []auth.RolesUser `json:"roles"`
+	User  auth.User `json:"user"`
+	Roles []string  `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -38,7 +38,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (service *jwtServices) GenerateToken(user auth.User, roles []auth.RolesUser) string {
+func (service *jwtServices) GenerateToken(user auth.User, roles []string) string {
 	claims := &claims{
 		Roles: roles,
 		User:  user,
@@ -63,7 +63,7 @@ func (service *jwtServices) ValidateToken(receivedToken string) (*jwt.Token, err
 	})
 }
 
-func (service *jwtServices) ExtractDataInfoFromJWT(tokenString string) ([]auth.RolesUser, error) {
+func (service *jwtServices) ExtractDataInfoFromJWT(tokenString string) (interface{}, error) {
 	t, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		return []byte(service.secretKey), nil
 	})
@@ -74,9 +74,8 @@ func (service *jwtServices) ExtractDataInfoFromJWT(tokenString string) ([]auth.R
 
 	if t.Valid {
 		claims := t.Claims.(jwt.MapClaims)
-
-		return claims["roles"].([]auth.RolesUser), nil
+		return claims["roles"], nil
 	}
 
-	return []auth.RolesUser{}, errors.New("No fue posible procesar su token.")
+	return nil, errors.New("No fue posible procesar su token.")
 }

@@ -1,5 +1,13 @@
 package conductores
 
+type CreateConductor struct {
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Matricula string `json:"matricula"`
+	Vehiculo  string `json:"vehiculo"`
+}
+
 type Conductor struct {
 	Id         int64  `json:"id"`
 	Users_id   int64  `json:"users_id"`
@@ -13,4 +21,8 @@ type Conductor struct {
 
 type Viaje struct {
 	Trip_status bool `json:"trip_status"`
+}
+
+type ConductorOk struct {
+	Token string
 }

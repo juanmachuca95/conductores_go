@@ -5,22 +5,66 @@ import (
 	"log"
 
 	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
+	auth "github.com/juanmachuca95/spaceguru/services/auth/gateway"
 	m "github.com/juanmachuca95/spaceguru/services/conductores/models"
 	q "github.com/juanmachuca95/spaceguru/services/conductores/querys"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ConductorStorage interface {
 	getConductores(page int) (*[]m.Conductor, error)
 	getConductoresDisponibles() (*[]m.Conductor, error)
+	createConductor(u *m.CreateConductor) (*m.ConductorOk, error)
 }
 
 type ServiceConductor struct {
 	*sql.DB
-	srvJWT srvJWT.JWTService
+	srvJWT         srvJWT.JWTService
+	authentication auth.AuthGateway
 }
 
 func NewConductorStorageGateway(db *sql.DB) *ServiceConductor {
-	return &ServiceConductor{db, srvJWT.JWTAuthService()}
+	return &ServiceConductor{db, srvJWT.JWTAuthService(), auth.NewAuthGateway(db)}
+}
+
+func (s *ServiceConductor) createConductor(u *m.CreateConductor) (*m.ConductorOk, error) {
+	stmt, err := s.Prepare(q.InsertUser())
+	if err != nil {
+		panic(err.Error())
+	}
+	defer stmt.Close()
+
+	hashPass, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.MinCost)
+	var passwordHashed string = string(hashPass)
+	result, err := stmt.Exec(u.Name, u.Email, passwordHashed)
+	if err != nil {
+		return &m.ConductorOk{}, err
+	}
+
+	users_id, err := result.LastInsertId()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	stmt1, err := s.Prepare(q.InsertConductor())
+	if err != nil {
+		panic(err.Error())
+	}
+	defer stmt1.Close()
+
+	_, err = stmt1.Exec(users_id, u.Matricula, u.Vehiculo)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	user, _ := s.authentication.GetUser(users_id)
+	_, _ = s.authentication.CreateRoleUser("conductor", users_id)
+	roles, _ := s.authentication.GetRolesUser(users_id)
+	_token := s.srvJWT.GenerateToken(*user, *roles)
+
+	return &m.ConductorOk{
+		Token: _token,
+	}, nil
 }
 
 func (s *ServiceConductor) getConductores(page int) (*[]m.Conductor, error) {

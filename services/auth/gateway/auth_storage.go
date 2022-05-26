@@ -15,6 +15,8 @@ type AuthStorage interface {
 	login(u *m.Login) (*m.UserToken, error)
 	register(u *m.Register) (*m.UserToken, error)
 	getUser(id int64) (*m.User, error)
+	createRoleUser(role string, id int64) (*int64, error)
+	getRolesUser(id int64) (*[]string, error)
 }
 
 type AuthService struct {
@@ -90,7 +92,7 @@ func (s *AuthService) getUser(id int64) (*m.User, error) {
 	defer stmt.Close()
 
 	var user m.User
-	err = stmt.QueryRow(id).Scan(&user.Id, &user.Name, &user.Email, &user.Rol)
+	err = stmt.QueryRow(id).Scan(&user.Id, &user.Name, &user.Email)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -98,7 +100,7 @@ func (s *AuthService) getUser(id int64) (*m.User, error) {
 	return &user, nil
 }
 
-func (s *AuthService) getRolesUser(id int64) (*[]m.RolesUser, error) {
+func (s *AuthService) getRolesUser(id int64) (*[]string, error) {
 	stmt, err := s.Prepare(q.GetRolesUser())
 	if err != nil {
 		panic(err)
@@ -110,15 +112,15 @@ func (s *AuthService) getRolesUser(id int64) (*[]m.RolesUser, error) {
 		panic(err.Error())
 	}
 
-	var rolesusers []m.RolesUser
+	var rolesusers []string
 	for rows.Next() {
 		var rolesuser m.RolesUser
-		err := rows.Scan(&rolesuser.Id, &rolesuser.Role)
+		err := rows.Scan(&rolesuser.Role)
 		if err != nil {
 			panic(err.Error())
 		}
 
-		rolesusers = append(rolesusers, rolesuser)
+		rolesusers = append(rolesusers, rolesuser.Role)
 	}
 
 	if rows.Err() != nil {
@@ -126,4 +128,32 @@ func (s *AuthService) getRolesUser(id int64) (*[]m.RolesUser, error) {
 	}
 
 	return &rolesusers, nil
+}
+
+func (s *AuthService) createRoleUser(role string, id int64) (*int64, error) {
+	stmt, err := s.Prepare(q.GetRoleId())
+	if err != nil {
+		panic(err.Error())
+	}
+	defer stmt.Close()
+
+	var roles_id int64
+	_ = stmt.QueryRow(role).Scan(&roles_id)
+
+	stmt1, err := s.Prepare(q.InsertRoleUser())
+	if err != nil {
+		panic(err.Error())
+	}
+
+	result, err := stmt1.Exec(roles_id, id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	rolesuser_id, err := result.LastInsertId()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return &rolesuser_id, nil
 }

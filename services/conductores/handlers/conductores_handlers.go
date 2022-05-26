@@ -5,15 +5,32 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	conductores "github.com/juanmachuca95/spaceguru/services/conductores/gateway"
+	cond "github.com/juanmachuca95/spaceguru/services/conductores/gateway"
+	m "github.com/juanmachuca95/spaceguru/services/conductores/models"
 )
 
 type ServiceHTTPConductores struct {
-	conductores.ConductorGateway
+	cond.ConductorGateway
 }
 
 func NewServiceHTTPConductores(db *sql.DB) *ServiceHTTPConductores {
-	return &ServiceHTTPConductores{conductores.NewConductorGateway(db)}
+	return &ServiceHTTPConductores{cond.NewConductorGateway(db)}
+}
+
+func (s *ServiceHTTPConductores) CreateConductorHandler(c *gin.Context) {
+	var createConductor m.CreateConductor
+	if err := c.ShouldBindJSON(&createConductor); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := s.CreateConductor(&createConductor)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Success", "_token": user.Token})
 }
 
 func (s *ServiceHTTPConductores) GetConductoresHandler(c *gin.Context) {
