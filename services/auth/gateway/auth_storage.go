@@ -64,7 +64,7 @@ func (s *AuthService) register(u *m.Register) (*m.UserToken, error) {
 
 	hashPass, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.MinCost)
 	var passwordHashed string = string(hashPass)
-	result, err := stmt.Exec(u.Name, u.Email, passwordHashed, u.Rol)
+	result, err := stmt.Exec(u.Name, u.Email, passwordHashed)
 	if err != nil {
 		return &m.UserToken{}, err
 	}
@@ -75,7 +75,9 @@ func (s *AuthService) register(u *m.Register) (*m.UserToken, error) {
 	}
 
 	user, _ := s.getUser(users_id)
+	_, _ = s.createRoleUser("admin", users_id)
 	roles, _ := s.getRolesUser(user.Id)
+
 	_token := s.srvJWT.GenerateToken(*user, *roles)
 	return &m.UserToken{
 		Token: _token,

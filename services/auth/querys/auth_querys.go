@@ -9,7 +9,7 @@ var GetUserById = func() string {
 }
 
 var InsertUser = func() string {
-	return "INSERT INTO users (name, email, password, rol, created_at, updated_at) VALUES (?,?,?,?, NOW(), NOW());"
+	return "INSERT INTO users (name, email, password, created_at, updated_at) VALUES (?,?,?, NOW(), NOW());"
 }
 
 var GetRolesUser = func() string {

@@ -42,7 +42,7 @@ func (s *ServiceHTTPAuth) RegisterHandler(c *gin.Context) {
 
 	user, err := s.gtw.Register(&register)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "Ya existe una cuenta con este usuario."})
 		return
 	}
 

@@ -26,7 +26,7 @@ func (s *ServiceHTTPConductores) CreateConductorHandler(c *gin.Context) {
 
 	user, err := s.CreateConductor(&createConductor)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "Ya existe una cuenta con este usuario."})
 		return
 	}
 
