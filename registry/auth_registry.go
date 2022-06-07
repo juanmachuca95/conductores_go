@@ -14,7 +14,7 @@ func (r *registry) NewAuthController() controllers.AuthController {
 }
 
 func (r *registry) NewAuthInteractor() interactor.AuthInteractor {
-	return interactor.NewAuthInteractor(r.NewAuthRepository(), r.NewAuthPresenter(), ri.NewDBRepository(r.db))
+	return interactor.NewAuthInteractor(r.NewAuthRepository(), r.NewAuthPresenter(), ri.NewDBRepository(r.db), ri.NewJwtRepository())
 }
 
 func (r *registry) NewAuthPresenter() presenter.AuthPresenter {
