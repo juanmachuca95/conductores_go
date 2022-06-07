@@ -18,7 +18,7 @@ func NewAuthRepository(db *sql.DB) repository.AuthRepository {
 }
 
 func (a *authRepository) Login(l *models.Login) (*models.User, error) {
-	stmt, err := a.db.Prepare("SELECT id, name, email, created_at, updated_at FROM users WHERE email = ?;")
+	stmt, err := a.db.Prepare("SELECT id, name, email, password, created_at, updated_at FROM users WHERE email = ?;")
 	if err != nil {
 		panic(err)
 	}
