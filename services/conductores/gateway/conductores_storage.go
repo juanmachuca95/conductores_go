@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"log"
 
-	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
-	auth "github.com/juanmachuca95/spaceguru/services/auth/gateway"
-	m "github.com/juanmachuca95/spaceguru/services/conductores/models"
-	q "github.com/juanmachuca95/spaceguru/services/conductores/querys"
+	srvJWT "github.com/juanmachuca95/conductores_go/internal/service_jwt"
+	auth "github.com/juanmachuca95/conductores_go/services/auth/gateway"
+	m "github.com/juanmachuca95/conductores_go/services/conductores/models"
+	q "github.com/juanmachuca95/conductores_go/services/conductores/querys"
 	"golang.org/x/crypto/bcrypt"
 )
 

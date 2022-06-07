@@ -2,11 +2,11 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	database "github.com/juanmachuca95/spaceguru/internal/databases"
-	"github.com/juanmachuca95/spaceguru/internal/middleware"
+	database "github.com/juanmachuca95/conductores_go/internal/databases"
+	"github.com/juanmachuca95/conductores_go/internal/middleware"
 
-	serviceAuth "github.com/juanmachuca95/spaceguru/services/auth/handlers"
-	serviceCond "github.com/juanmachuca95/spaceguru/services/conductores/handlers"
+	serviceAuth "github.com/juanmachuca95/conductores_go/services/auth/handlers"
+	serviceCond "github.com/juanmachuca95/conductores_go/services/conductores/handlers"
 )
 
 func InitRoute() *gin.Engine {

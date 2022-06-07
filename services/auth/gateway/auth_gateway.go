@@ -3,7 +3,7 @@ package auth
 import (
 	"database/sql"
 
-	m "github.com/juanmachuca95/spaceguru/services/auth/models"
+	m "github.com/juanmachuca95/conductores_go/services/auth/models"
 )
 
 type AuthGateway interface {

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	auth "github.com/juanmachuca95/spaceguru/services/auth/models"
+	auth "github.com/juanmachuca95/conductores_go/services/auth/models"
 )
 
 type JWTService interface {

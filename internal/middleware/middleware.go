@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	service "github.com/juanmachuca95/spaceguru/internal/service_jwt"
+	service "github.com/juanmachuca95/conductores_go/internal/service_jwt"
 )
 
 func AuthorizeJWT() gin.HandlerFunc {

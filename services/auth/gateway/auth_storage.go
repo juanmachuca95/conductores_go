@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 
-	srvJWT "github.com/juanmachuca95/spaceguru/internal/service_jwt"
-	m "github.com/juanmachuca95/spaceguru/services/auth/models"
-	q "github.com/juanmachuca95/spaceguru/services/auth/querys"
+	srvJWT "github.com/juanmachuca95/conductores_go/internal/service_jwt"
+	m "github.com/juanmachuca95/conductores_go/services/auth/models"
+	q "github.com/juanmachuca95/conductores_go/services/auth/querys"
 	"golang.org/x/crypto/bcrypt"
 )
 

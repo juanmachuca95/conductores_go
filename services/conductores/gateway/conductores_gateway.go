@@ -3,7 +3,7 @@ package conductores
 import (
 	"database/sql"
 
-	m "github.com/juanmachuca95/spaceguru/services/conductores/models"
+	m "github.com/juanmachuca95/conductores_go/services/conductores/models"
 )
 
 type ConductorGateway interface {

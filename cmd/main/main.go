@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/juanmachuca95/spaceguru/api"
+	"github.com/juanmachuca95/conductores_go/api"
 )
 
 func main() {

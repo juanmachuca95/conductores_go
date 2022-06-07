@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	auth "github.com/juanmachuca95/spaceguru/services/auth/gateway"
-	m "github.com/juanmachuca95/spaceguru/services/auth/models"
+	auth "github.com/juanmachuca95/conductores_go/services/auth/gateway"
+	m "github.com/juanmachuca95/conductores_go/services/auth/models"
 )
 
 type ServiceHTTPAuth struct {
