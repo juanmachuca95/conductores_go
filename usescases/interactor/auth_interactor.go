@@ -15,13 +15,15 @@ type AuthInteractor interface {
 type authInteractor struct {
 	authRepository repository.AuthRepository
 	authPresenter  presenter.AuthPresenter
+	dbRepository   repository.DBRepository
 }
 
 func NewAuthInteractor(
 	r repository.AuthRepository,
 	p presenter.AuthPresenter,
+	d repository.DBRepository,
 ) AuthInteractor {
-	return &authInteractor{authRepository: r, authPresenter: p}
+	return &authInteractor{authRepository: r, authPresenter: p, dbRepository: d}
 }
 
 func (a *authInteractor) Authentication(u *models.Login) (string, error) {

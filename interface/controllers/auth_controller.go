@@ -7,8 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/juanmachuca95/conductores_go/domains/models"
 	"github.com/juanmachuca95/conductores_go/usescases/interactor"
-	"github.com/juanmachuca95/conductores_go/usescases/presenter"
-	"github.com/juanmachuca95/conductores_go/usescases/repository"
 )
 
 type AuthController interface {
@@ -19,8 +17,8 @@ type authController struct {
 	authinteractor interactor.AuthInteractor
 }
 
-func NewAuthController(r repository.AuthRepository, p presenter.AuthPresenter) AuthController {
-	return &authController{authinteractor: interactor.NewAuthInteractor(r, p)}
+func NewAuthController(i interactor.AuthInteractor) AuthController {
+	return &authController{authinteractor: i}
 }
 
 func (a *authController) Login(c *gin.Context) {
