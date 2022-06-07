@@ -34,9 +34,13 @@ func NewAuthInteractor(
 func (a *authInteractor) Authentication(u *models.Login) (string, error) {
 	user, err := a.authRepository.Login(u)
 	if err != nil {
-		return a.authPresenter.AuthResponse("")
+		return "", err
 	}
 
-	token := a.jwtRepository.GenerateToken(*user, []string{"admin"})
-	return a.authPresenter.AuthResponse(token)
+	token, err := a.jwtRepository.GenerateToken(*user, []string{"admin"})
+	if err != nil {
+		return "", err
+	}
+
+	return a.authPresenter.AuthResponse(token), nil
 }

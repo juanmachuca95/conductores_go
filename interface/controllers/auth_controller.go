@@ -30,7 +30,7 @@ func (a *authController) Login(c *gin.Context) {
 
 	token, err := a.authinteractor.Authentication(&login)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		return
 	}
 

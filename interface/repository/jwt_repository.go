@@ -11,7 +11,7 @@ import (
 )
 
 type JwtRepository interface {
-	GenerateToken(models.User, []string) string
+	GenerateToken(models.User, []string) (string, error)
 	ValidateToken(string) (*jwt.Token, error)
 	ExtractDataInfoFromJWT(string) (interface{}, error)
 }
@@ -38,7 +38,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (j *jwtRepository) GenerateToken(user models.User, roles []string) string {
+func (j *jwtRepository) GenerateToken(user models.User, roles []string) (string, error) {
 	claims := &claims{
 		Roles: roles,
 		User:  user,
@@ -49,9 +49,10 @@ func (j *jwtRepository) GenerateToken(user models.User, roles []string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	_token, err := token.SignedString([]byte(j.secretKey))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return _token
+
+	return _token, nil
 }
 
 func (j *jwtRepository) ValidateToken(receivedToken string) (*jwt.Token, error) {

@@ -1,5 +1,5 @@
 package presenter
 
 type AuthPresenter interface {
-	AuthResponse(string) (string, error)
+	AuthResponse(string) string
 }

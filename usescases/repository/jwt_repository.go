@@ -6,7 +6,7 @@ import (
 )
 
 type JwtRepository interface {
-	GenerateToken(models.User, []string) string
+	GenerateToken(models.User, []string) (string, error)
 	ValidateToken(string) (*jwt.Token, error)
 	ExtractDataInfoFromJWT(string) (interface{}, error)
 }
