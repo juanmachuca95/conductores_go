@@ -11,14 +11,14 @@ import (
 )
 
 type JwtRepository interface {
-	GenerateToken(models.User, []string) (string, error)
+	GenerateToken(*models.User, []*models.Role) (string, error)
 	ValidateToken(string) (*jwt.Token, error)
 	ExtractDataInfoFromJWT(string) (interface{}, error)
 }
 
 type claims struct {
-	User  models.User `json:"user"`
-	Roles []string    `json:"roles"`
+	User  *models.User   `json:"user"`
+	Roles []*models.Role `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -38,7 +38,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (j *jwtRepository) GenerateToken(user models.User, roles []string) (string, error) {
+func (j *jwtRepository) GenerateToken(user *models.User, roles []*models.Role) (string, error) {
 	claims := &claims{
 		Roles: roles,
 		User:  user,

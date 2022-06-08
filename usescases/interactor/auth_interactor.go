@@ -11,23 +11,26 @@ type AuthInteractor interface {
 }
 
 type authInteractor struct {
-	authRepository repository.AuthRepository
-	authPresenter  presenter.AuthPresenter
-	dbRepository   repository.DBRepository
-	jwtRepository  repository.JwtRepository
+	authRepository  repository.AuthRepository
+	authPresenter   presenter.AuthPresenter
+	dbRepository    repository.DBRepository
+	jwtRepository   repository.JwtRepository
+	rolesRepository repository.RolesRepository
 }
 
 func NewAuthInteractor(
-	r repository.AuthRepository,
+	a repository.AuthRepository,
 	p presenter.AuthPresenter,
 	d repository.DBRepository,
 	j repository.JwtRepository,
+	r repository.RolesRepository,
 ) AuthInteractor {
 	return &authInteractor{
-		authRepository: r,
-		authPresenter:  p,
-		dbRepository:   d,
-		jwtRepository:  j,
+		authRepository:  a,
+		authPresenter:   p,
+		dbRepository:    d,
+		jwtRepository:   j,
+		rolesRepository: r,
 	}
 }
 
@@ -37,7 +40,12 @@ func (a *authInteractor) Authentication(u *models.Login) (string, error) {
 		return "", err
 	}
 
-	token, err := a.jwtRepository.GenerateToken(*user, []string{"admin"})
+	roles, err := a.rolesRepository.GetRolesByUser(user)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := a.jwtRepository.GenerateToken(user, roles)
 	if err != nil {
 		return "", err
 	}
