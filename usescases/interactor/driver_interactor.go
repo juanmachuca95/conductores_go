@@ -8,6 +8,7 @@ import (
 
 type DriverInteractor interface {
 	GetDriversWithPagination(int64) ([]*models.Driver, error)
+	GetDriversAvailable() ([]*models.Driver, error)
 }
 
 type driverInteractor struct {
@@ -23,6 +24,15 @@ func NewDriverInteractor(d repository.DriverRepository, p presenter.DriverPresen
 
 func (d *driverInteractor) GetDriversWithPagination(pager int64) ([]*models.Driver, error) {
 	drivers, err := d.driverRepository.GetDriversWithPagination(pager)
+	if err != nil {
+		return nil, err
+	}
+
+	return d.driverPresenter.DriverResponse(drivers), nil
+}
+
+func (d *driverInteractor) GetDriversAvailable() ([]*models.Driver, error) {
+	drivers, err := d.driverRepository.GetDriversAvailable()
 	if err != nil {
 		return nil, err
 	}

@@ -13,6 +13,7 @@ func SetupRouter(app controllers.AppController) *gin.Engine {
 
 	// Drivers
 	r.GET("/drivers", func(ctx *gin.Context) { app.Driver.GetDriversWithPagination(ctx) })
+	r.GET("/driversavailable", func(ctx *gin.Context) { app.Driver.GetDriversAvailable(ctx) })
 
 	return r
 }

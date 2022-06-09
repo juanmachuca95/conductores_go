@@ -14,6 +14,7 @@ type driverController struct {
 
 type DriverController interface {
 	GetDriversWithPagination(*gin.Context)
+	GetDriversAvailable(*gin.Context)
 }
 
 func NewDriverController(i interactor.DriverInteractor) DriverController {
@@ -30,6 +31,17 @@ func (d *driverController) GetDriversWithPagination(c *gin.Context) {
 	}
 
 	drivers, err := d.driverInteractor.GetDriversWithPagination(request.Pager)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, drivers)
+	return
+}
+
+func (d *driverController) GetDriversAvailable(c *gin.Context) {
+	drivers, err := d.driverInteractor.GetDriversAvailable()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return

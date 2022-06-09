@@ -50,3 +50,30 @@ func (d *driverRepository) GetDriversWithPagination(page int64) ([]*models.Drive
 
 	return drivers, nil
 }
+
+func (d *driverRepository) GetDriversAvailable() ([]*models.Driver, error) {
+	stmt, err := d.db.Prepare("SELECT c.id, u.name, u.email, c.users_id, c.matricula, c.vehiculo, c.created_at, c.updated_at FROM conductores as c INNER JOIN users as u ON u.id = c.users_id INNER JOIN viajes v ON v.users_id = c.id WHERE trip_status=1;")
+	if err != nil {
+		panic(err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	var drivers []*models.Driver
+	for rows.Next() {
+		var driver models.Driver
+		err = rows.Scan(&driver.Id, &driver.Name, &driver.Email, &driver.Users_id, &driver.Matricula, &driver.Vehiculo, &driver.Created_at, &driver.Updated_at)
+
+		drivers = append(drivers, &driver)
+	}
+
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+	return drivers, nil
+}
