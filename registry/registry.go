@@ -20,6 +20,7 @@ func NewRegistry(db *sql.DB) Registry {
 
 func (r *registry) NewAppController() controllers.AppController {
 	return controllers.AppController{
-		Auth: r.NewAuthController(),
+		Auth:   r.NewAuthController(),
+		Driver: r.NewDriverController(),
 	}
 }

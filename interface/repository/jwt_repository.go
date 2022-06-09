@@ -8,13 +8,8 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/juanmachuca95/conductores_go/domains/models"
+	"github.com/juanmachuca95/conductores_go/usescases/repository"
 )
-
-type JwtRepository interface {
-	GenerateToken(*models.User, []*models.Role) (string, error)
-	ValidateToken(string) (*jwt.Token, error)
-	ExtractDataInfoFromJWT(string) (interface{}, error)
-}
 
 type claims struct {
 	User  *models.User   `json:"user"`
@@ -26,7 +21,7 @@ type jwtRepository struct {
 	secretKey string
 }
 
-func NewJwtRepository() JwtRepository {
+func NewJwtRepository() repository.JwtRepository {
 	return &jwtRepository{secretKey: getSecretKey()}
 }
 

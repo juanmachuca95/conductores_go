@@ -11,5 +11,8 @@ func SetupRouter(app controllers.AppController) *gin.Engine {
 
 	r.POST("/login", func(ctx *gin.Context) { app.Auth.Login(ctx) })
 
+	// Drivers
+	r.GET("/drivers", func(ctx *gin.Context) { app.Driver.GetDriversWithPagination(ctx) })
+
 	return r
 }
