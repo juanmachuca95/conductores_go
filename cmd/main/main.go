@@ -17,7 +17,8 @@ func main() {
 	re := registry.NewRegistry(db)
 
 	app := re.NewAppController()
-	r := router.SetupRouter(app)
+	mdw := re.NewMiddlewares()
+	r := router.SetupRouter(app, mdw)
 
 	r.Run(apiPort)
 }

@@ -12,8 +12,8 @@ import (
 )
 
 type claims struct {
-	User  *models.User   `json:"user"`
-	Roles []*models.Role `json:"roles"`
+	User  *models.User `json:"user"`
+	Roles []string     `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -34,13 +34,19 @@ func getSecretKey() string {
 }
 
 func (j *jwtRepository) GenerateToken(user *models.User, roles []*models.Role) (string, error) {
+	var rols []string
+	for _, rol := range roles {
+		rols = append(rols, rol.Role)
+	}
+
 	claims := &claims{
-		Roles: roles,
+		Roles: rols,
 		User:  user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 48).Unix(),
 		},
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	_token, err := token.SignedString([]byte(j.secretKey))
 	if err != nil {
@@ -65,7 +71,7 @@ func (j *jwtRepository) ExtractDataInfoFromJWT(tokenString string) (interface{},
 	})
 
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 
 	if t.Valid {

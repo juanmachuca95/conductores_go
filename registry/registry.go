@@ -4,10 +4,12 @@ import (
 	"database/sql"
 
 	"github.com/juanmachuca95/conductores_go/interface/controllers"
+	"github.com/juanmachuca95/conductores_go/usescases/repository"
 )
 
 type Registry interface {
 	NewAppController() controllers.AppController
+	NewMiddlewares() repository.MiddlewareRepository
 }
 
 type registry struct {
