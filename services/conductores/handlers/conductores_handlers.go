@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	cond "github.com/juanmachuca95/spaceguru/services/conductores/gateway"
-	m "github.com/juanmachuca95/spaceguru/services/conductores/models"
+	cond "github.com/juanmachuca95/conductores_go/services/conductores/gateway"
+	m "github.com/juanmachuca95/conductores_go/services/conductores/models"
 )
 
 type ServiceHTTPConductores struct {
