@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"errors"
@@ -8,26 +8,21 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/juanmachuca95/conductores_go/domains/models"
+	"github.com/juanmachuca95/conductores_go/usescases/repository"
 )
 
-type JWTService interface {
-	GenerateToken(models.User, []*models.Role) string
-	ValidateToken(string) (*jwt.Token, error)
-	ExtractDataInfoFromJWT(string) (interface{}, error)
-}
-
 type claims struct {
-	User  models.User `json:"user"`
-	Roles []string    `json:"roles"`
+	User  *models.User `json:"user"`
+	Roles []string     `json:"roles"`
 	jwt.StandardClaims
 }
 
-type jwtServices struct {
+type jwtRepository struct {
 	secretKey string
 }
 
-func JWTAuthService() JWTService {
-	return &jwtServices{secretKey: getSecretKey()}
+func NewJwtRepository() repository.JwtRepository {
+	return &jwtRepository{secretKey: getSecretKey()}
 }
 
 func getSecretKey() string {
@@ -38,11 +33,12 @@ func getSecretKey() string {
 	return secret
 }
 
-func (service *jwtServices) GenerateToken(user models.User, roles []*models.Role) string {
+func (j *jwtRepository) GenerateToken(user *models.User, roles []*models.Role) (string, error) {
 	var rols []string
 	for _, rol := range roles {
 		rols = append(rols, rol.Role)
 	}
+
 	claims := &claims{
 		Roles: rols,
 		User:  user,
@@ -50,26 +46,28 @@ func (service *jwtServices) GenerateToken(user models.User, roles []*models.Role
 			ExpiresAt: time.Now().Add(time.Hour * 48).Unix(),
 		},
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	_token, err := token.SignedString([]byte(service.secretKey))
+	_token, err := token.SignedString([]byte(j.secretKey))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return _token
+
+	return _token, nil
 }
 
-func (service *jwtServices) ValidateToken(receivedToken string) (*jwt.Token, error) {
+func (j *jwtRepository) ValidateToken(receivedToken string) (*jwt.Token, error) {
 	return jwt.Parse(receivedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, isvalid := token.Method.(*jwt.SigningMethodHMAC); !isvalid {
 			return nil, fmt.Errorf("Invalid token")
 		}
-		return []byte(service.secretKey), nil
+		return []byte(j.secretKey), nil
 	})
 }
 
-func (service *jwtServices) ExtractDataInfoFromJWT(tokenString string) (interface{}, error) {
+func (j *jwtRepository) ExtractDataInfoFromJWT(tokenString string) (interface{}, error) {
 	t, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return []byte(service.secretKey), nil
+		return []byte(j.secretKey), nil
 	})
 
 	if err != nil {
