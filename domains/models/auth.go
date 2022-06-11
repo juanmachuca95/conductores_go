@@ -18,7 +18,6 @@ type User struct {
 	Id         int64  `json:"id"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
-	Rol        string `json:"rol,omitempty"`
 	Created_at string `json:"created_at,omitempty"`
 	Updated_at string `json:"updated_at,omitempty"`
 }
